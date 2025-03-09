@@ -1,37 +1,44 @@
+const githubService = require('../services/githubService');
+
 class GitHubController {
-    constructor(githubService) {
-        this.githubService = githubService;
+  async getUserData(req, res, next) {
+    try {
+      const userData = await githubService.getUserData();
+      res.json(userData);
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async getGitHubData(req, res) {
-        try {
-            const userData = await this.githubService.fetchUserData();
-            res.json(userData);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to fetch GitHub data' });
-        }
+  async getRepoData(req, res, next) {
+    try {
+      const { repoName } = req.params;
+      const repoData = await githubService.getRepoData(repoName);
+      res.json(repoData);
+    } catch (error) {
+      next(error);
     }
+  }
 
-    async getRepoData(req, res) {
-        const { repoName } = req.params;
-        try {
-            const repoData = await this.githubService.fetchRepoData(repoName);
-            res.json(repoData);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to fetch repository data' });
-        }
+  async createIssue(req, res, next) {
+    try {
+      const { repoName } = req.params;
+      const { title, body } = req.body;
+      
+      if (!title) {
+        return res.status(400).json({ error: 'Issue title is required' });
+      }
+      
+      const issue = await githubService.createIssue(repoName, { title, body });
+      res.status(201).json({
+        message: 'Issue created successfully',
+        issueUrl: issue.html_url,
+        issueData: issue
+      });
+    } catch (error) {
+      next(error);
     }
-
-    async createIssue(req, res) {
-        const { repoName } = req.params;
-        const { title, body } = req.body;
-        try {
-            const issueUrl = await this.githubService.createGitHubIssue(repoName, title, body);
-            res.json({ url: issueUrl });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to create issue' });
-        }
-    }
+  }
 }
 
-export default GitHubController;
+module.exports = new GitHubController();

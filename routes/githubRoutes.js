@@ -1,12 +1,15 @@
-import express from 'express';
-import GitHubController from '../controllers/githubController.js';
+const express = require('express');
+const githubController = require('../controllers/githubController');
 
 const router = express.Router();
-const githubController = new GitHubController();
 
-export const setRoutes = (app) => {
-    app.use('/github', router);
-    router.get('/', githubController.getGitHubData);
-    router.get('/:repoName', githubController.getRepoData);
-    router.post('/:repoName/issues', githubController.createIssue);
-};
+//Show user data
+router.get('/', githubController.getUserData);
+
+//Show repo data
+router.get('/:repoName', githubController.getRepoData);
+
+//Create an issue in particular repo
+router.post('/:repoName/issues', githubController.createIssue);
+
+module.exports = router;
