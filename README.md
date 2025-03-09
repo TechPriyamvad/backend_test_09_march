@@ -42,6 +42,8 @@ Creates a new issue in the specified repository.
 
 - Node.js (v14 or higher)
 - GitHub account with a personal access token
+  - Feel free to set token validity as per your requirements
+  - Current application token validity is 90 days
 
 # Installation
 
